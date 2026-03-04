@@ -1,3 +1,4 @@
+### main.py
 import tkinter as tk
 from game_gui import MinesweeperGUI
 

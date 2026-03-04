@@ -1,3 +1,4 @@
+### bot_dfs.py
 class DFSAgent:
     def __init__(self, rows, cols):
         self.rows = rows
@@ -132,13 +133,14 @@ class DFSAgent:
                 for cell, p in comp_probs.items():
                     if p['MINE'] == 1.0:
                         return "MINE", cell
-                    else:
-                        all_stats[cell] = {'p': p, 'complete': True} 
+
                 for cell, p in comp_probs.items():
                     if p['SAFE'] == 1.0:
                         return "SAFE", cell
-                    else:
-                        all_stats[cell] = {'p': p, 'complete': True} 
+
+                # Không có cell chắc chắn → lưu để so sánh sau
+                for cell, p in comp_probs.items():
+                    all_stats[cell] = {'p': p, 'complete': True}
             # else store them
             else:
                 for cell, p in comp_probs.items():
