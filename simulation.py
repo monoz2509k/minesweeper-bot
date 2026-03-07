@@ -83,7 +83,7 @@ class GameLogic:
         return state
 
 
-def run_simulation(n_games=100, rows=9, cols=9, mines=10):
+def run_simulation(n_games=1000, rows=9, cols=9, mines=10):
     wins = 0
     total_clicks = 0
 
@@ -126,4 +126,4 @@ def run_simulation(n_games=100, rows=9, cols=9, mines=10):
 
 
 if __name__ == "__main__":
-    run_simulation(n_games=100, rows=9, cols=9, mines=10)
+    run_simulation(n_games=1000, rows=9, cols=9, mines=10)
