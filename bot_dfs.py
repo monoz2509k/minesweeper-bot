@@ -112,7 +112,6 @@ class DFSAgent:
 
     def get_best_move(self, kb):
         frontier_cells = self.get_frontier_cells(kb)
-        n = len(frontier_cells)
         if not frontier_cells: return None, None
         
         components = self.split_into_components(frontier_cells, kb)
@@ -146,8 +145,6 @@ class DFSAgent:
             else:
                 for cell, p in comp_probs.items():
                     all_stats[cell] = {'p': p, 'complete': is_complete}
-        if n < 10:
-            return None, None
 
         # else pick the one with highest SAFE probs 
         if all_stats:
