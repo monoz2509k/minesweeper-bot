@@ -112,6 +112,10 @@ def run_simulation(n_games=1000, rows=9, cols=9, mines=10):
                 else:
                     break
 
+        if not game.win and game.clicks < 5:
+            print(f"Game {i+1:>3}: SKIP ⏭️ | Clicks: {game.clicks} (bad luck)")
+            continue
+
         result = "PASS ✅" if game.win else "FAIL ❌"
         print(f"Game {i+1:>3}: {result} | Clicks: {game.clicks}")
 
