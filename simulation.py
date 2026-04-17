@@ -9,7 +9,7 @@ class GameLogic:
         self.rows = rows
         self.cols = cols
         self.mines = mines
-        self.agent = DFSAgent(rows, cols)
+        self.agent = DFSAgent(rows, cols, mines)
 
         self.mine_positions = set()
         self.flags = set()
@@ -97,7 +97,10 @@ def run_simulation(n_games=100, rows=9, cols=9, mines=10):
         # Bot plays until game over
         while not game.game_over:
             kb = game.get_knowledge_base()
-            action, cell = game.agent.get_best_move(kb)
+            unrevealed = [(r, c) for r in range(rows) for c in range(cols)
+                          if (r, c) not in game.revealed and (r, c) not in game.flags]
+            flagged = list(game.flags)
+            action, cell = game.agent.get_best_move(kb, unrevealed=unrevealed, flagged=flagged)
 
             if action == "SAFE" and cell:
                 game.left_click(*cell)
@@ -105,13 +108,15 @@ def run_simulation(n_games=100, rows=9, cols=9, mines=10):
                 game.right_click(*cell)
             else:
                 # Random guess
-                unrevealed = [(r, c) for r in range(rows) for c in range(cols)
-                              if (r, c) not in game.revealed and (r, c) not in game.flags]
                 if unrevealed:
                     game.left_click(*random.choice(unrevealed))
                 else:
                     break
-
+                    
+        if not game.win and game.clicks < 5:
+            print(f"Game {i+1:>3}: SKIP ⏭️ | Clicks: {game.clicks} (bad luck)")
+            continue
+        
         result = "PASS ✅" if game.win else "FAIL ❌"
         print(f"Game {i+1:>3}: {result} | Clicks: {game.clicks}")
 

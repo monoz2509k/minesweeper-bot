@@ -51,14 +51,15 @@ def run_benchmark():
                     game.left_click(r, c)
                     while not game.game_over:
                         kb = game.get_knowledge_base()
-                        action, cell = game.agent.get_best_move(kb)
+                        unrevealed = [(rr, cc) for rr in range(rows) for cc in range(cols)
+                                      if (rr, cc) not in game.revealed and (rr, cc) not in game.flags]
+                        flagged = list(game.flags)
+                        action, cell = game.agent.get_best_move(kb, unrevealed=unrevealed, flagged=flagged)
                         if action == "SAFE" and cell:
                             game.left_click(*cell)
                         elif action == "MINE" and cell:
                             game.right_click(*cell)
                         else:
-                            unrevealed = [(rr, cc) for rr in range(rows) for cc in range(cols)
-                                          if (rr, cc) not in game.revealed and (rr, cc) not in game.flags]
                             if unrevealed:
                                 game.left_click(*random.choice(unrevealed))
                             else:

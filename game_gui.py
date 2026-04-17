@@ -18,7 +18,7 @@ class MinesweeperGUI:
         self.game_over = False
         self.first_click = True
         
-        self.agent = DFSAgent(rows, cols)
+        self.agent = DFSAgent(rows, cols, mines)
 
         self.setup_gui()
         self.place_mines()
@@ -39,7 +39,7 @@ class MinesweeperGUI:
         self.bot_btn.config(state="normal")
         self.bot_all_btn.config(state="normal")
         
-        self.agent = DFSAgent(new_rows, new_cols)
+        self.agent = DFSAgent(new_rows, new_cols, new_mines)
         
         self.create_board()
         self.place_mines()
@@ -229,7 +229,10 @@ class MinesweeperGUI:
             return
 
         kb = self.get_knowledge_base()
-        action_type, target_cell = self.agent.get_best_move(kb)
+        unrevealed = [(r, c) for r in range(self.rows) for c in range(self.cols)
+                      if (r, c) not in self.revealed and (r, c) not in self.flags]
+        flagged = list(self.flags)
+        action_type, target_cell = self.agent.get_best_move(kb, unrevealed=unrevealed, flagged=flagged)
 
         if action_type == "SAFE" and target_cell:
             print(f"Bot opens safe cell: {target_cell}")
@@ -238,9 +241,6 @@ class MinesweeperGUI:
             print(f"Bot flags mine: {target_cell}")
             self.right_click(*target_cell)
         else:
-            
-            unrevealed = [(r, c) for r in range(self.rows) for c in range(self.cols) 
-                         if (r, c) not in self.revealed and (r, c) not in self.flags]
             if unrevealed:
                 r, c = random.choice(unrevealed)
                 print(f"Bot guesses random cell: ({r}, {c})")

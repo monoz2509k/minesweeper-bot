@@ -1,8 +1,11 @@
 ### bot_dfs.py
+import random
+
 class DFSAgent:
-    def __init__(self, rows, cols):
+    def __init__(self, rows, cols, mines=None):
         self.rows = rows
         self.cols = cols
+        self.mines = mines
 
     def get_neighbors(self, r, c):
         # get neightbours (8 cells around)
@@ -110,10 +113,15 @@ class DFSAgent:
             probs[cell] = {'SAFE': 1 - p_mine, 'MINE': p_mine}
         return probs
 
-    def get_best_move(self, kb):
+    def get_best_move(self, kb, unrevealed=None, flagged=None):
+        if unrevealed is None:
+            unrevealed = [cell for cell, value in kb.items() if value == 'U']
+        if flagged is None:
+            flagged = [cell for cell, value in kb.items() if value == 'F']
+
         frontier_cells = self.get_frontier_cells(kb)
-        n = len(frontier_cells)
-        if not frontier_cells: return None, None
+        if not frontier_cells:
+            return None, None
         
         components = self.split_into_components(frontier_cells, kb)
         all_stats = {} 
@@ -146,13 +154,26 @@ class DFSAgent:
             else:
                 for cell, p in comp_probs.items():
                     all_stats[cell] = {'p': p, 'complete': is_complete}
-        if n < 10:
-            return None, None
 
         # else pick the one with highest SAFE probs 
         if all_stats:
             best_guess = max(all_stats.keys(), key=lambda c: all_stats[c]['p']['SAFE'])
             prob_safe = all_stats[best_guess]['p']['SAFE']
+
+            non_frontier_unknowns = [cell for cell in unrevealed if cell not in frontier_cells]
+            if self.mines is not None and non_frontier_unknowns:
+                mines_left = max(0, self.mines - len(flagged))
+                expected_frontier_mines = sum(all_stats[cell]['p']['MINE'] for cell in all_stats)
+                outside_mines = max(0.0, mines_left - expected_frontier_mines)
+                outside_unknowns = len(non_frontier_unknowns)
+
+                if outside_unknowns > 0:
+                    outside_safe_prob = 1 - (outside_mines / outside_unknowns)
+                    if outside_safe_prob > prob_safe:
+                        choice = random.choice(non_frontier_unknowns)
+                        print(f"Bot avoids frontier; chooses non-frontier cell {choice} with estimated SAFE confidence: {outside_safe_prob*100:.1f}%")
+                        return "SAFE", choice
+
             print(f"Bot guesses cell {best_guess} with SAFE confidence: {prob_safe*100:.1f}%")
             return "SAFE", best_guess
 
