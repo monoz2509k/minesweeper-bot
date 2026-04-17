@@ -15,7 +15,7 @@ An intelligent Minesweeper bot implemented in Python using Depth-First Search (D
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/monoz2509k/minesweeper-bot.git
    cd minesweeper-bot
    ```
 
