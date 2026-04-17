@@ -71,14 +71,6 @@ The bot uses a constraint satisfaction approach:
 
 See `BENCHMARK_RESULTS.md` for detailed performance metrics across different difficulty levels.
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run benchmarks to ensure performance
-5. Submit a pull request
-
 ## License
 
 MIT License
